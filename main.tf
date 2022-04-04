@@ -322,7 +322,7 @@ resource "helm_release" "online-boutique" {
        ENV_PLATFORM: "local"
        CYMBAL_BRANDING: "'false'" # disabled
    service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+     type: LoadBalancer # ClusterIP, NodePort, LoadBalancer
      http:
        port: 80 ## External Port for LoadBalancer/NodePort
        targetPort: 8080
