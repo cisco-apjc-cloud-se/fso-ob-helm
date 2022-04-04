@@ -422,7 +422,7 @@ resource "helm_release" "online-boutique" {
        APPD_KEY: "${var.appd_account_key}"
        APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
        APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
-       APPD_CONTROLLER_PORT: 443
+       APPD_CONTROLLER_PORT: "'443'"
        SERVICE_NAMESPACE: "online-boutique"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
