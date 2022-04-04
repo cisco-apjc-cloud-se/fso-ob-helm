@@ -3,7 +3,7 @@ terraform {
     hostname = "app.terraform.io"
     organization = "mel-ciscolabs-com"
     workspaces {
-      name = "fso-teastore-helm"
+      name = "fso-ob-helm"
     }
   }
   required_providers {
@@ -169,7 +169,8 @@ resource "helm_release" "iwo-collector" {
 #    annotations:
 #      kubeturbo.io/controllable: "true"
 # EOF
- ]
+# ]
+
 }
 
 ## Add Online Boutique Release  ##
@@ -418,9 +419,9 @@ resource "helm_release" "online-boutique" {
          memory: 300Mi
        env:
          APPD_ENDPOINT: "https://pdx-sls-agent-api.saas.appdynamics.com/"
-         APPD_KEY: "${appd_account_key}"
-         APPD_CONTROLLER_ACCOUNT: "${appd_account_name}"
-         APPD_CONTROLLER_HOST: "${appd_account_name}.saas.appdynamics.com"
+         APPD_KEY: "${var.appd_account_key}"
+         APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
+         APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
          APPD_CONTROLLER_PORT: 443
          SERVICE_NAMESPACE: "online-boutique"
      service:
