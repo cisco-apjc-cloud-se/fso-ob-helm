@@ -5,7 +5,7 @@
 # appd_account_password = ""  # Set in Workspace Variables
 
 # teastore_chart_url = "https://cisco-apjc-cloud-se.github.io/helm-fso-teastore/fso-teastore-0.6.0.tgz"
-demo_app_url = ""
+demo_app_url = "https://github.com/cisco-apjc-cloud-se/opentelemetry-microservices-demo/raw/main/helm/opentelemetry-microservices-demo-0.1.0.tgz"
 
 ### Intersight Workload Optimizer Details ###
 iwo_cluster_name = "iks-fso-ob"
