@@ -320,7 +320,7 @@ resource "helm_release" "online-boutique" {
        # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
        # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
        ENV_PLATFORM: "local"
-       CYMBAL_BRANDING: "False" # disabled
+       CYMBAL_BRANDING: "'false'" # disabled
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      http:
@@ -403,7 +403,7 @@ resource "helm_release" "online-boutique" {
        memory: 512Mi
      env:
        FRONTEND_ADDR: "frontend:80"
-       USERS: \"10\"
+       USERS: "'10'"
 
  otelcollector:
    replicas: 1
