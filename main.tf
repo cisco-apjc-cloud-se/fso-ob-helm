@@ -187,7 +187,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/adservice # gcr.io/google-samples/microservices-demo/adservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 400m
        memory: 360Mi
@@ -208,7 +208,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/cartservice # gcr.io/google-samples/microservices-demo/cartservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 200m
        memory: 64Mi
@@ -230,7 +230,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/checkoutservice # gcr.io/google-samples/microservices-demo/checkoutservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -257,7 +257,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/currencyservice # gcr.io/google-samples/microservices-demo/currencyservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -279,7 +279,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/emailservice # gcr.io/google-samples/microservices-demo/emailservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -300,7 +300,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/frontend # gcr.io/google-samples/microservices-demo/frontend
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -394,7 +394,7 @@ resource "helm_release" "online-boutique" {
    main:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/loadgenerator # gcr.io/google-samples/microservices-demo/loadgenerator
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 300m
        memory: 256Mi
@@ -410,7 +410,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/otelcollector
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 200m
        memory: 180Mi
@@ -450,7 +450,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/paymentservice # gcr.io/google-samples/microservices-demo/paymentservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -471,7 +471,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/paymentservice # gcr.io/google-samples/microservices-demo/paymentservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -492,7 +492,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/productcatalogservice # gcr.io/google-samples/microservices-demo/productcatalogservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 64Mi
@@ -513,7 +513,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/recommendationservice # gcr.io/google-samples/microservices-demo/recommendationservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 220Mi
@@ -553,7 +553,7 @@ resource "helm_release" "online-boutique" {
    server:
      image:
        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/shippingservice # gcr.io/google-samples/microservices-demo/shippingservice
-       tag: v0.1.0
+       tag: latest # v0.1.0
      requests:
        cpu: 100m
        memory: 220Mi
