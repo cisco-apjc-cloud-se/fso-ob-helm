@@ -403,7 +403,7 @@ resource "helm_release" "online-boutique" {
        memory: 512Mi
      env:
        FRONTEND_ADDR: "frontend:80"
-       USERS: "10"
+       USERS: \"10\"
 
  otelcollector:
    replicas: 1
