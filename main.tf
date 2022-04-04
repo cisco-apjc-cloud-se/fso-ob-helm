@@ -207,7 +207,7 @@ resource "helm_release" "online-boutique" {
    replicas: 1
    server:
      image:
-       name: gcr.io/google-samples/microservices-demo/cartservice:v0.3.6 # public.ecr.aws/j8r8c0y6/otel-online-boutique/cartservice # gcr.io/google-samples/microservices-demo/cartservice
+       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/cartservice # gcr.io/google-samples/microservices-demo/cartservice
        tag: latest # v0.1.0
      requests:
        cpu: 200m
