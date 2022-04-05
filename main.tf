@@ -802,16 +802,22 @@ resource "helm_release" "appd-cluster-agent" {
    value = false
  }
 
- ### Enable Docker Visibility ###
+ ### Disable Docker Visibility - IKS 1.21+ ###
  set {
    name = "infraViz.enableDockerViz"
-   value = true
+   value = false  ## 1.21+
  }
 
  ### Enable Server Visibility ###
  set {
    name = "infraViz.enableServerViz"
    value = true
+ }
+
+ ### Enable Container Host IP - IKS 1.21+ ###
+ set {
+   name = "infraViz.enableContainerHostId"
+   value = true ## 1.21+
  }
 
  # infraViz:
