@@ -413,10 +413,10 @@ resource "helm_release" "online-boutique" {
        tag: latest # v0.1.0
      requests:
        cpu: 200m
-       memory: 180Mi
+       memory: 360Mi # OOMKilled @ 180Mi
      limits:
        cpu: 300m
-       memory: 300Mi
+       memory: 600Mi # OOMKilled @ 300Mi
      env:
        APPD_ENDPOINT: "https://pdx-sls-agent-api.saas.appdynamics.com/"
        APPD_KEY: "${var.appd_account_key}"
