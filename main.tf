@@ -342,10 +342,10 @@ resource "helm_release" "online-boutique" {
        tag: latest # 1.31
      requests:
        cpu: 200m
-       memory: 180Mi
+       memory: 360Mi # OOMKilled @ 180Mi
      limits:
        cpu: 300m
-       memory: 300Mi
+       memory: 600Mi # OOMKilled @ 300Mi
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      p5775:
