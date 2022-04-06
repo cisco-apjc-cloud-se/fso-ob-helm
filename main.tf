@@ -820,11 +820,6 @@ resource "helm_release" "appd-cluster-agent" {
    value = true ## 1.21+
  }
 
- ### Override Volume Mounts ###
- set {
-   name = "infravizPod.overrideVolumeMounts."
- }
-
  # infraViz:
  #   enableContainerHostId: false
  #   enableDockerViz: false
