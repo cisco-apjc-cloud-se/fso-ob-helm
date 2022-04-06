@@ -419,7 +419,7 @@ resource "helm_release" "online-boutique" {
        memory: 600Mi # OOMKilled @ 300Mi
      env:
        APPD_ENDPOINT: "https://pdx-sls-agent-api.saas.appdynamics.com/"
-       APPD_KEY: "${var.appd_account_key}"
+       APPD_KEY: "${var.appd_otel_api_key}"
        APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
        APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
        APPD_CONTROLLER_PORT: "'443'"
@@ -818,6 +818,11 @@ resource "helm_release" "appd-cluster-agent" {
  set {
    name = "infraViz.enableContainerHostId"
    value = true ## 1.21+
+ }
+
+ ### Override Volume Mounts ###
+ set {
+   name = "infravizPod.overrideVolumeMounts."
  }
 
  # infraViz:
