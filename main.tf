@@ -882,27 +882,27 @@ resource "helm_release" "appd-cluster-agent" {
    value = ".*"
  }
 
-#  ## Auto Instrumentation
-#
-# # auto-instrumentation config
-#  values = [<<EOF
-#  instrumentationConfig:
-#    enabled: true
-#    instrumentationMethod: env
-#    nsToInstrumentRegex: teastore
-#    defaultAppName: TeaStore-RW
-#    appNameStrategy: manual
-#    instrumentationRules:
-#      - namespaceRegex: teastore
-#        language: java
-#        labelMatch:
-#          - framework: java
-#        imageInfo:
-#          image: docker.io/appdynamics/java-agent:latest
-#          agentMountPath: /opt/appdynamics
-#          imagePullPolicy: Always
-# EOF
-# ]
+ ## Auto Instrumentation
+
+# auto-instrumentation config
+ values = [<<EOF
+ instrumentationConfig:
+   enabled: true
+   instrumentationMethod: env
+   nsToInstrumentRegex: online-boutique
+   defaultAppName: online-boutique
+   appNameStrategy: manual
+   instrumentationRules:
+     - namespaceRegex: online-boutique
+       language: java
+       labelMatch:
+         - framework: java
+       imageInfo:
+         image: docker.io/appdynamics/java-agent:latest
+         agentMountPath: /opt/appdynamics
+         imagePullPolicy: Always
+EOF
+]
 
  depends_on = [helm_release.metrics-server]
 }
