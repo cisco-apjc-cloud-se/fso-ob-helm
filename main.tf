@@ -196,7 +196,7 @@ resource "helm_release" "online-boutique" {
        memory: 600Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=adservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=adservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -218,7 +218,7 @@ resource "helm_release" "online-boutique" {
      env:
        REDIS_ADDR: "redis-cart:6379"
        OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4317" # NOT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT !?
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=cartservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=cartservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -245,7 +245,7 @@ resource "helm_release" "online-boutique" {
        CURRENCY_SERVICE_ADDR: "currencyservice:7000"
        CART_SERVICE_ADDR: "cartservice:7070"
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=checkoutservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=checkoutservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -266,7 +266,7 @@ resource "helm_release" "online-boutique" {
        memory: 128Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=currencyservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=currencyservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -288,7 +288,7 @@ resource "helm_release" "online-boutique" {
        memory: 128Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=emailservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=emailservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -316,7 +316,7 @@ resource "helm_release" "online-boutique" {
        CHECKOUT_SERVICE_ADDR: "checkoutservice:5050"
        AD_SERVICE_ADDR: "adservice:9555"
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=frontend,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=frontend,service.version=1.0.0"
        # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
        # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
        ENV_PLATFORM: "local"
@@ -459,7 +459,7 @@ resource "helm_release" "online-boutique" {
        memory: 128Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=paymentservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=paymentservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -480,7 +480,7 @@ resource "helm_release" "online-boutique" {
        memory: 128Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=paymentservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=paymentservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -501,7 +501,7 @@ resource "helm_release" "online-boutique" {
        memory: 128Mi
      env:
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=productcatalogservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=productcatalogservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -523,7 +523,7 @@ resource "helm_release" "online-boutique" {
      env:
        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=recommendationservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=recommendationservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
@@ -563,7 +563,7 @@ resource "helm_release" "online-boutique" {
      env:
        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.name=shippingservice,service.version=1.0.0"
+       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=shippingservice,service.version=1.0.0"
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      grpc:
