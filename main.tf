@@ -345,7 +345,7 @@ resource "helm_release" "online-boutique" {
        memory: 360Mi # OOMKilled @ 180Mi
      limits:
        cpu: 300m
-       memory: 600Mi # OOMKilled @ 300Mi
+       memory: 1200Mi # OOMKilled @ 600Mi
    service:
      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
      p5775:
