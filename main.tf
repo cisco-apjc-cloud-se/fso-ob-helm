@@ -318,7 +318,7 @@ resource "helm_release" "online-boutique" {
        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=frontend,service.version=1.0.0"
        # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
        # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
-       ENV_PLATFORM: "local"
+       ENV_PLATFORM: "onprem"
        CYMBAL_BRANDING: "'false'" # disabled
    service:
      type: LoadBalancer # ClusterIP, NodePort, LoadBalancer
@@ -443,27 +443,6 @@ resource "helm_release" "online-boutique" {
      p55670:
        port: 55670
        targetPort: 55670
-
- paymentservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/paymentservice # gcr.io/google-samples/microservices-demo/paymentservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=paymentservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 50051 ## External Port for LoadBalancer/NodePort
-       targetPort: 50051
 
  paymentservice:
    replicas: 1
