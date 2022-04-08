@@ -273,7 +273,6 @@ resource "helm_release" "online-boutique" {
        port: 7000 ## External Port for LoadBalancer/NodePort
        targetPort: 7000
 
-
  emailservice:
    replicas: 1
    server:
@@ -899,6 +898,22 @@ resource "helm_release" "appd-cluster-agent" {
          - framework: java
        imageInfo:
          image: docker.io/appdynamics/java-agent:latest
+         agentMountPath: /opt/appdynamics
+         imagePullPolicy: Always
+     - namespaceRegex: online-boutique
+       language: dotnetcore
+       labelMatch:
+         - framework: dotnetcore
+       imageInfo:
+         image: docker.io/appdynamics/dotnet-core-agent:latest
+         agentMountPath: /opt/appdynamics
+         imagePullPolicy: Always
+     - namespaceRegex: online-boutique
+       language: nodejs
+       labelMatch:
+         - framework: nodejs
+       imageInfo:
+         image: docker.io/appdynamics/nodejs-agent:latest
          agentMountPath: /opt/appdynamics
          imagePullPolicy: Always
 EOF
