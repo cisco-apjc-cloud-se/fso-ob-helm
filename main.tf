@@ -913,7 +913,7 @@ resource "helm_release" "appd-cluster-agent" {
        labelMatch:
          - framework: nodejs
        imageInfo:
-         image: docker.io/appdynamics/nodejs-agent:22.3.0-16-stretch-slim # no latest
+         image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest
          agentMountPath: /opt/appdynamics
          imagePullPolicy: Always
 EOF
