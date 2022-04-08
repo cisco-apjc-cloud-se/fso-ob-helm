@@ -417,7 +417,7 @@ resource "helm_release" "online-boutique" {
        cpu: 300m
        memory: 600Mi # OOMKilled @ 300Mi
      env:
-       APPD_ENDPOINT: "https://pdx-sls-agent-api.saas.appdynamics.com"
+       APPD_ENDPOINT: "https://syd-sls-agent-api.saas.appdynamics.com"
        APPD_KEY: "${var.appd_otel_api_key}"
        APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
        APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
