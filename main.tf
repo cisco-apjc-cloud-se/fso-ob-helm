@@ -553,145 +553,6 @@ EOF
 
 }
 
-# ## Add Tea Store Release  ##
-# resource "helm_release" "fso-teastore" {
-#  namespace   = kubernetes_namespace.teastore.metadata[0].name
-#  name        = "fso-teastore"
-#
-#  chart       = var.teastore_chart_url
-#
-#  values = [<<EOF
-# OrderProcessor: false
-# Log4ShellDemo: false
-#
-# teastore_auth:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#
-# teastore_db:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "200m" # "500m" scaled down by IWO
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 3306
-#    port: 3306 ## External Port for LoadBalancer/NodePort
-#
-# teastore_image:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#
-# teastore_loadgen:
-#  replicas: 0 # Off by default
-#  resources:
-#    memory: "256M"
-#    cpu: "200m" # "500m" scaled down by IWO
-#  settings:
-#    num_users: 10
-#    ramp_up: 1
-#
-# teastore_loadgen_amex:
-#  replicas: 0 # Off by default
-#  resources:
-#    memory: "256M"
-#    cpu: "200m" # "500m" scaled down by IWO
-#  settings:
-#    num_users: 10
-#    ramp_up: 1
-#
-# teastore_persistence:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#
-# ### Used for Memory Leak Detection in AppD ###
-# teastore_ldap:
-#  replicas: 0
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    revshell:
-#      port: 8888
-#      targetPort: 8888 ## External Port for LoadBalancer/NodePort
-#    ldap:
-#      port: 1389
-#      targetPort: 1389 ## External Port for LoadBalancer/NodePort
-#
-# ### Used for Memory Leak Detection in AppD ###
-# teastore_orderprocessor:
-#  replicas: 0
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  settings:
-#    mem_increment_mb: 1
-#    processing_rate_seconds: 15
-#    max_jvm_heap: "512m"
-#
-# teastore_recommender:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "400m" # "500m" scaled down by IWO
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#
-# teastore_registry:
-#  replicas: 1
-#  resources:
-#    memory: "256M"
-#    cpu: "100m"  ## "500m" lowered by IWO
-#  service:
-#    type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#
-# teastore_webui:
-#  v1:
-#    replicas: 1
-#  v2:
-#    replicas: 1
-#  v3:
-#    replicas: 0
-#  resources:
-#    memory: "256M"
-#    cpu: "500m"
-#  service:
-#    type: LoadBalancer # ClusterIP, NodePort, LoadBalancer
-#    targetPort: 8080
-#    port: 8080 ## External Port for LoadBalancer/NodePort
-#  env:
-#    visa_url: "https://fso-payment-gw-sim.azurewebsites.net/api/payment"
-#    mastercard_url: "https://fso-payment-gw-sim.azurewebsites.net/api/payment"
-#    amex_url: "https://amex-fso-payment-gw-sim.azurewebsites.net/api/payment"
-# EOF
-# ]
-#
-#  depends_on = [helm_release.appd-cluster-agent]
-# }
-
 ## Add Metrics Server Release ##
 # - Required for AppD Cluster Agent
 
@@ -860,43 +721,43 @@ resource "helm_release" "appd-cluster-agent" {
    value = ".*"
  }
 
- ## Auto Instrumentation
-
-# auto-instrumentation config
- values = [<<EOF
- instrumentationConfig:
-   enabled: true
-   instrumentationMethod: env
-   nsToInstrumentRegex: online-boutique
-   defaultAppName: online-boutique
-   appNameStrategy: manual
-   instrumentationRules:
-     - namespaceRegex: online-boutique
-       language: java
-       labelMatch:
-         - framework: java
-       imageInfo:
-         image: docker.io/appdynamics/java-agent:latest
-         agentMountPath: /opt/appdynamics
-         imagePullPolicy: Always
-     - namespaceRegex: online-boutique
-       language: dotnetcore
-       labelMatch:
-         - framework: dotnetcore
-       imageInfo:
-         image: docker.io/appdynamics/dotnet-core-agent:latest
-         agentMountPath: /opt/appdynamics
-         imagePullPolicy: Always
-     - namespaceRegex: online-boutique
-       language: nodejs
-       labelMatch:
-         - framework: nodejs
-       imageInfo:
-         image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest
-         agentMountPath: /opt/appdynamics
-         imagePullPolicy: Always
-EOF
-]
+#  ## Auto Instrumentation
+#
+# # auto-instrumentation config
+#  values = [<<EOF
+#  instrumentationConfig:
+#    enabled: true
+#    instrumentationMethod: env
+#    nsToInstrumentRegex: online-boutique
+#    defaultAppName: online-boutique
+#    appNameStrategy: manual
+#    instrumentationRules:
+#      - namespaceRegex: online-boutique
+#        language: java
+#        labelMatch:
+#          - framework: java
+#        imageInfo:
+#          image: docker.io/appdynamics/java-agent:latest
+#          agentMountPath: /opt/appdynamics
+#          imagePullPolicy: Always
+#      - namespaceRegex: online-boutique
+#        language: dotnetcore
+#        labelMatch:
+#          - framework: dotnetcore
+#        imageInfo:
+#          image: docker.io/appdynamics/dotnet-core-agent:latest
+#          agentMountPath: /opt/appdynamics
+#          imagePullPolicy: Always
+#      - namespaceRegex: online-boutique
+#        language: nodejs
+#        labelMatch:
+#          - framework: nodejs
+#        imageInfo:
+#          image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest
+#          agentMountPath: /opt/appdynamics
+#          imagePullPolicy: Always
+# EOF
+# ]
 
  depends_on = [helm_release.metrics-server]
 }
