@@ -579,188 +579,301 @@ resource "helm_release" "metrics-server" {
 
 }
 
-## Add Appd Cluster Agent Release  ##
-resource "helm_release" "appd-cluster-agent" {
- namespace   = kubernetes_namespace.appd.metadata[0].name
- name        = "fso-ob-cluster-agent"
+## AppDynamics Kubernetes Operator ##
+resource "helm_release" "appd-operator" {
+   namespace   = kubernetes_namespace.appd.metadata[0].name
+   name        = "fso-appd-operator"
 
- repository  = "https://ciscodevnet.github.io/appdynamics-charts"
- chart       = "cluster-agent"
+   repository  = "https://ciscodevnet.github.io/appdynamics-charts"
+   chart       = "cluster-agent"
 
- ### Set Image Tag Version to Latest ###
- set {
-   name = "imageInfo.agentTag"
-   value = "latest"
- }
+   #  ### Controller Details ###
+   #
+   #  set {
+   #    name = "controllerInfo.url"
+   #    value = format("https://%s.saas.appdynamics.com:443", var.appd_account_name)
+   #  }
+   #
+   #  set {
+   #    name = "controllerInfo.account"
+   #    value = var.appd_account_name
+   #  }
+   #
+   #  set {
+   #    name = "controllerInfo.accessKey"
+   #    value = var.appd_account_key
+   #  }
+   #
+   #  set {
+   #    name = "controllerInfo.username"
+   #    value = var.appd_account_username
+   #  }
+   #
+   #  set {
+   #    name = "controllerInfo.password"
+   #    value = var.appd_account_password
+   #  }
 
- set {
-   name = "imageInfo.machineAgentTag"
-   value = "latest"
- }
+   values = [ <<EOF
 
- set {
-   name = "imageInfo.netvizTag"
-   value = "latest"
- }
+installClusterAgent: true
+installInfraViz: true
 
- set {
-   name = "imageInfo.operatorTag"
-   value = "latest"
- }
+infraViz:
+ enableContainerHostId: true
+ enableDockerViz: false
+ enableMasters: false
+ enableServerViz: true
+ nodeOS: linux
+ stdoutLogging: false
 
- ### Agent Pod CPU/RAM Requests/Limits ###
- set {
-   name = "agentPod.resources.limits.cpu"
-   value = "1250m"
- }
+ clusterAgent:
+   nsToMonitor:
+     - coolsox-aws
 
- set {
-   name = "agentPod.resources.limits.memory"
-   value = "428Mi" # "300Mi" raised by IWO
- }
+instrumentationConfig:
+ enabled: true
+ instrumentationMethod: env
+ nsToInstrumentRegex: coolsox
+ defaultAppName: coolsox-rw
+ appNameStrategy: manual
+ instrumentationRules:
+   - namespaceRegex: coolsox
+     language: java
+     labelMatch:
+       - framework: java
+     imageInfo:
+       image: docker.io/appdynamics/java-agent:latest
+       agentMountPath: /opt/appdynamics
+       imagePullPolicy: Always
+   - namespaceRegex: coolsox
+     language: dotnetcore
+     labelMatch:
+       - framework: dotnetcore
+     imageInfo:
+       image: docker.io/appdynamics/dotnet-core-agent:latest
+       agentMountPath: /opt/appdynamics
+       imagePullPolicy: Always
+   - namespaceRegex: coolsox
+     language: nodejs
+     labelMatch:
+       - framework: nodejs
+     imageInfo:
+       image: docker.io/appdynamics/nodejs-agent:22.3.0-16-stretch-slim # no latest, need slim
+       agentMountPath: /opt/appdynamics
+       imagePullPolicy: Always
 
- set {
-   name = "agentPod.resources.requests.cpu"
-   value = "350m" # "750m" lowered by IWO
- }
+imageInfo:
+ agentImage: docker.io/appdynamics/cluster-agent
+ agentTag: latest # 22.1.0
+ operatorImage: docker.io/appdynamics/cluster-agent-operator
+ operatorTag: latest # 22.1.0
+ imagePullPolicy: Always           # Will be used for operator pod
+ machineAgentImage: docker.io/appdynamics/machine-agent
+ machineAgentTag: latest
+ machineAgentWinImage: docker.io/appdynamics/machine-agent-analytics
+ machineAgentWinTag: win-latest
+ netVizImage: docker.io/appdynamics/machine-agent-netviz
+ netvizTag: latest
 
- set {
-   name = "agentPod.resources.requests.memory"
-   value = "150Mi"
- }
+controllerInfo:
+ url: ${format("https://%s.saas.appdynamics.com:443", var.appd_account_name)}
+ account: ${var.appd_account_name}
+ username: ${var.appd_account_username}
+ password: ${var.appd_account_password}
+ accessKey: ${var.appd_account_key}
+ # globalAccount: <controller-global-account>   # To be provided when using machineAgent Window Image
 
- ### Enable InfraViz ###
- set {
-   name = "installInfraViz"
-   value = true
- }
+agentServiceAccount: appdynamics-cluster-agent
+operatorServiceAccount: appdynamics-operator
+infravizServiceAccount: appdynamics-infraviz
 
- ### Enable NetViz ###
- set {
-   name = "netViz.enabled"
-   value = false
- }
-
- ### Disable Docker Visibility - IKS 1.21+ ###
- set {
-   name = "infraViz.enableDockerViz"
-   value = false  ## 1.21+
- }
-
- ### Enable Server Visibility ###
- set {
-   name = "infraViz.enableServerViz"
-   value = true
- }
-
- ### Enable Container Host IP - IKS 1.21+ ###
- set {
-   name = "infraViz.enableContainerHostId"
-   value = true ## 1.21+
- }
-
- # infraViz:
- #   enableContainerHostId: false
- #   enableDockerViz: false
- #   enableMasters: false
- #   enableServerViz: false
- #   nodeOS: linux
- #   stdoutLogging: false
-
- ### Machine / Infra Viz Agent Pod Sizes ###
- set {
-   name = "infravizPod.resources.limits.cpu"
-   value = "500m"
- }
-
- set {
-   name = "infravizPod.resources.limits.memory"
-   value = "1G"
- }
-
- set {
-   name = "infravizPod.resources.requests.cpu"
-   value = "200m"
- }
-
- set {
-   name = "infravizPod.resources.requests.memory"
-   value = "800m"
- }
-
- ### Controller Details ###
-
- set {
-   name = "controllerInfo.url"
-   value = format("https://%s.saas.appdynamics.com:443", var.appd_account_name)
- }
-
- set {
-   name = "controllerInfo.account"
-   value = var.appd_account_name
- }
-
- set {
-   name = "controllerInfo.accessKey"
-   value = var.appd_account_key
- }
-
- set {
-   name = "controllerInfo.username"
-   value = var.appd_account_username
- }
-
- set {
-   name = "controllerInfo.password"
-   value = var.appd_account_password
- }
-
- ## Monitor All Namespaces
- set {
-   name = "clusterAgent.nsToMonitorRegex"
-   value = ".*"
- }
-
-#  ## Auto Instrumentation
-#
-# # auto-instrumentation config
-#  values = [<<EOF
-#  instrumentationConfig:
-#    enabled: true
-#    instrumentationMethod: env
-#    nsToInstrumentRegex: online-boutique
-#    defaultAppName: online-boutique
-#    appNameStrategy: manual
-#    instrumentationRules:
-#      - namespaceRegex: online-boutique
-#        language: java
-#        labelMatch:
-#          - framework: java
-#        imageInfo:
-#          image: docker.io/appdynamics/java-agent:latest
-#          agentMountPath: /opt/appdynamics
-#          imagePullPolicy: Always
-#      - namespaceRegex: online-boutique
-#        language: dotnetcore
-#        labelMatch:
-#          - framework: dotnetcore
-#        imageInfo:
-#          image: docker.io/appdynamics/dotnet-core-agent:latest
-#          agentMountPath: /opt/appdynamics
-#          imagePullPolicy: Always
-#      - namespaceRegex: online-boutique
-#        language: nodejs
-#        labelMatch:
-#          - framework: nodejs
-#        imageInfo:
-#          image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest
-#          agentMountPath: /opt/appdynamics
-#          imagePullPolicy: Always
-# EOF
-# ]
-
- depends_on = [helm_release.metrics-server]
+EOF
+   ]
 }
+
+# ## Add Appd Cluster Agent Release  ##
+# resource "helm_release" "appd-cluster-agent" {
+#  namespace   = kubernetes_namespace.appd.metadata[0].name
+#  name        = "fso-ob-cluster-agent"
+#
+#  repository  = "https://ciscodevnet.github.io/appdynamics-charts"
+#  chart       = "cluster-agent"
+#
+#  ### Set Image Tag Version to Latest ###
+#  set {
+#    name = "imageInfo.agentTag"
+#    value = "latest"
+#  }
+#
+#  set {
+#    name = "imageInfo.machineAgentTag"
+#    value = "latest"
+#  }
+#
+#  set {
+#    name = "imageInfo.netvizTag"
+#    value = "latest"
+#  }
+#
+#  set {
+#    name = "imageInfo.operatorTag"
+#    value = "latest"
+#  }
+#
+#  ### Agent Pod CPU/RAM Requests/Limits ###
+#  set {
+#    name = "agentPod.resources.limits.cpu"
+#    value = "1250m"
+#  }
+#
+#  set {
+#    name = "agentPod.resources.limits.memory"
+#    value = "428Mi" # "300Mi" raised by IWO
+#  }
+#
+#  set {
+#    name = "agentPod.resources.requests.cpu"
+#    value = "350m" # "750m" lowered by IWO
+#  }
+#
+#  set {
+#    name = "agentPod.resources.requests.memory"
+#    value = "150Mi"
+#  }
+#
+#  ### Enable InfraViz ###
+#  set {
+#    name = "installInfraViz"
+#    value = true
+#  }
+#
+#  ### Enable NetViz ###
+#  set {
+#    name = "netViz.enabled"
+#    value = false
+#  }
+#
+#  ### Disable Docker Visibility - IKS 1.21+ ###
+#  set {
+#    name = "infraViz.enableDockerViz"
+#    value = false  ## 1.21+
+#  }
+#
+#  ### Enable Server Visibility ###
+#  set {
+#    name = "infraViz.enableServerViz"
+#    value = true
+#  }
+#
+#  ### Enable Container Host IP - IKS 1.21+ ###
+#  set {
+#    name = "infraViz.enableContainerHostId"
+#    value = true ## 1.21+
+#  }
+#
+#  # infraViz:
+#  #   enableContainerHostId: false
+#  #   enableDockerViz: false
+#  #   enableMasters: false
+#  #   enableServerViz: false
+#  #   nodeOS: linux
+#  #   stdoutLogging: false
+#
+#  ### Machine / Infra Viz Agent Pod Sizes ###
+#  set {
+#    name = "infravizPod.resources.limits.cpu"
+#    value = "500m"
+#  }
+#
+#  set {
+#    name = "infravizPod.resources.limits.memory"
+#    value = "1G"
+#  }
+#
+#  set {
+#    name = "infravizPod.resources.requests.cpu"
+#    value = "200m"
+#  }
+#
+#  set {
+#    name = "infravizPod.resources.requests.memory"
+#    value = "800m"
+#  }
+#
+#  ### Controller Details ###
+#
+#  set {
+#    name = "controllerInfo.url"
+#    value = format("https://%s.saas.appdynamics.com:443", var.appd_account_name)
+#  }
+#
+#  set {
+#    name = "controllerInfo.account"
+#    value = var.appd_account_name
+#  }
+#
+#  set {
+#    name = "controllerInfo.accessKey"
+#    value = var.appd_account_key
+#  }
+#
+#  set {
+#    name = "controllerInfo.username"
+#    value = var.appd_account_username
+#  }
+#
+#  set {
+#    name = "controllerInfo.password"
+#    value = var.appd_account_password
+#  }
+#
+#  ## Monitor All Namespaces
+#  set {
+#    name = "clusterAgent.nsToMonitorRegex"
+#    value = ".*"
+#  }
+#
+# #  ## Auto Instrumentation
+# #
+# # # auto-instrumentation config
+# #  values = [<<EOF
+# #  instrumentationConfig:
+# #    enabled: true
+# #    instrumentationMethod: env
+# #    nsToInstrumentRegex: online-boutique
+# #    defaultAppName: online-boutique
+# #    appNameStrategy: manual
+# #    instrumentationRules:
+# #      - namespaceRegex: online-boutique
+# #        language: java
+# #        labelMatch:
+# #          - framework: java
+# #        imageInfo:
+# #          image: docker.io/appdynamics/java-agent:latest
+# #          agentMountPath: /opt/appdynamics
+# #          imagePullPolicy: Always
+# #      - namespaceRegex: online-boutique
+# #        language: dotnetcore
+# #        labelMatch:
+# #          - framework: dotnetcore
+# #        imageInfo:
+# #          image: docker.io/appdynamics/dotnet-core-agent:latest
+# #          agentMountPath: /opt/appdynamics
+# #          imagePullPolicy: Always
+# #      - namespaceRegex: online-boutique
+# #        language: nodejs
+# #        labelMatch:
+# #          - framework: nodejs
+# #        imageInfo:
+# #          image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest
+# #          agentMountPath: /opt/appdynamics
+# #          imagePullPolicy: Always
+# # EOF
+# # ]
+#
+#  depends_on = [helm_release.metrics-server]
+# }
 
 # ## Add Prometheus (Kube-state-metrics, node-exporter, alertmanager)  ##
 # resource "helm_release" "prometheus" {
