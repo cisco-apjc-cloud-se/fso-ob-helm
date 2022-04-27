@@ -621,7 +621,7 @@ installInfraViz: true
 
 infraViz:
  enableContainerHostId: true
- enableDockerViz: false
+ enableDockerViz: true
  enableMasters: false
  enableServerViz: true
  nodeOS: linux
