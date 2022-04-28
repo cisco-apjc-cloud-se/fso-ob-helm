@@ -628,8 +628,8 @@ infraViz:
  stdoutLogging: false
 
  clusterAgent:
-   nsToMonitor:
-     - coolsox
+   nsToMonitorRegex:
+     - .*
 
 instrumentationConfig:
  enabled: true
