@@ -629,7 +629,7 @@ infraViz:
 
  clusterAgent:
    nsToMonitor:
-     - .*
+     - coolsox
 
 instrumentationConfig:
  enabled: true
