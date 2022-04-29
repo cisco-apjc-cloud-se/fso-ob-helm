@@ -553,31 +553,31 @@ EOF
 
 }
 
-## Add Metrics Server Release ##
-# - Required for AppD Cluster Agent
-
-resource "helm_release" "metrics-server" {
-  name = "metrics-server"
-  namespace = "kube-system"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart = "metrics-server"
-
-  set {
-    name = "apiService.create"
-    value = true
-  }
-
-  set {
-    name = "extraArgs.kubelet-insecure-tls"
-    value = true
-  }
-
-  set {
-    name = "extraArgs.kubelet-preferred-address-types"
-    value = "InternalIP"
-  }
-
-}
+# ## Add Metrics Server Release ##
+# # - Required for AppD Cluster Agent
+#
+# resource "helm_release" "metrics-server" {
+#   name = "metrics-server"
+#   namespace = "kube-system"
+#   repository = "https://charts.bitnami.com/bitnami"
+#   chart = "metrics-server"
+#
+#   set {
+#     name = "apiService.create"
+#     value = true
+#   }
+#
+#   set {
+#     name = "extraArgs.kubelet-insecure-tls"
+#     value = true
+#   }
+#
+#   set {
+#     name = "extraArgs.kubelet-preferred-address-types"
+#     value = "InternalIP"
+#   }
+#
+# }
 
 ## AppDynamics Kubernetes Operator ##
 resource "helm_release" "appd-operator" {
@@ -687,6 +687,9 @@ controllerInfo:
 agentServiceAccount: appdynamics-cluster-agent
 operatorServiceAccount: appdynamics-operator
 infravizServiceAccount: appdynamics-infraviz
+
+install:
+  metrics-server: true
 
 EOF
    ]
