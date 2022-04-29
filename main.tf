@@ -563,20 +563,32 @@ resource "helm_release" "metrics-server" {
   # repository = "https://charts.bitnami.com/bitnami"
   chart = "metrics-server"
 
-  set {
-    name = "apiService.create"
-    value = true
-  }
+  values = [<<EOF
 
-  set {
-    name = "extraArgs.kubelet-insecure-tls"
-    value = true
-  }
+    defaultArgs:
+      - --cert-dir=/tmp
+      - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+      - --kubelet-use-node-status-port
+      - --metric-resolution=15s
+      - --kubelet-insecure-tls
 
-  set {
-    name = "extraArgs.kubelet-preferred-address-types"
-    value = "InternalIP"
-  }
+EOF
+  ]
+
+  # set {
+  #   name = "apiService.create"
+  #   value = true
+  # }
+  #
+  # set {
+  #   name = "extraArgs.kubelet-insecure-tls"
+  #   value = true
+  # }
+  #
+  # set {
+  #   name = "extraArgs.kubelet-preferred-address-types"
+  #   value = "InternalIP"
+  # }
 
 }
 
