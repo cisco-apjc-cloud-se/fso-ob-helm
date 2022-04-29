@@ -559,7 +559,8 @@ EOF
 resource "helm_release" "metrics-server" {
   name = "metrics-server"
   namespace = "kube-system"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "https://kubernetes-sigs.github.io/metrics-server/"
+  # repository = "https://charts.bitnami.com/bitnami"
   chart = "metrics-server"
 
   set {
@@ -620,12 +621,16 @@ installClusterAgent: true
 installInfraViz: true
 
 infraViz:
- enableContainerHostId: true
- enableDockerViz: false
- enableMasters: false
- enableServerViz: true
- nodeOS: linux
- stdoutLogging: false
+  enableContainerHostId: true
+  enableDockerViz: false
+  enableMasters: false
+  enableServerViz: true
+  nodeOS: linux
+  stdoutLogging: false
+
+netViz:
+  enabled: true
+  # netVizPort: 3892
 
 clusterAgent:
  nsToMonitorRegex: .*
