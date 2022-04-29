@@ -621,15 +621,14 @@ installInfraViz: true
 
 infraViz:
  enableContainerHostId: true
- enableDockerViz: false
+ enableDockerViz: true
  enableMasters: false
  enableServerViz: true
  nodeOS: linux
  stdoutLogging: false
 
- clusterAgent:
-   nsToMonitorRegex:
-     - .*
+clusterAgent:
+ nsToMonitorRegex: .*
 
 instrumentationConfig:
  enabled: true
