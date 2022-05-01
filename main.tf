@@ -630,7 +630,7 @@ resource "helm_release" "appd-operator" {
    values = [ <<EOF
 
 installClusterAgent: true
-installInfraViz: true
+installInfraViz: false
 
 infraViz:
   enableContainerHostId: true
@@ -641,7 +641,7 @@ infraViz:
   stdoutLogging: false
 
 netViz:
-  enabled: true
+  enabled: false
   # netVizPort: 3892
 
 clusterAgent:
