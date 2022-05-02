@@ -656,6 +656,8 @@ instrumentationConfig:
  instrumentationRules:
    - namespaceRegex: coolsox
      language: java
+     runAsGroup: 10001
+     runAsUser: 10001
      labelMatch:
        - framework: java
      imageInfo:
