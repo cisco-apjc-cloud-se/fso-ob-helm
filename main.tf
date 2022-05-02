@@ -666,6 +666,7 @@ instrumentationConfig:
        imagePullPolicy: Always
    - namespaceRegex: coolsox
      language: dotnetcore
+     runAsUser: 10001
      labelMatch:
        - framework: dotnetcore
      imageInfo:
@@ -674,6 +675,7 @@ instrumentationConfig:
        imagePullPolicy: Always
    - namespaceRegex: coolsox
      language: nodejs
+     runAsUser: 10001
      labelMatch:
        - framework: nodejs
      imageInfo:
