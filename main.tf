@@ -681,7 +681,7 @@ instrumentationConfig:
      imageInfo:
        # image: docker.io/appdynamics/nodejs-agent:22.3.0-16-alpine # no latest, need slim
        # image: docker.io/appdynamics/nodejs-agent:21.8.0-16-stretch-slim # version 88
-       image: docker.io/appdynamics/nodejs-agent:21.9.0-12-stretch-slim
+       image: docker.io/appdynamics/nodejs-agent:21.9.0-16-stretch-slim
        agentMountPath: /opt/appdynamics
        imagePullPolicy: Always
 
