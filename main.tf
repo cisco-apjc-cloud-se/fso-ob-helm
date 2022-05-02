@@ -633,7 +633,7 @@ installClusterAgent: true
 installInfraViz: true
 
 infraViz:
-  enableContainerHostId: true
+  enableContainerHostId: false
   enableDockerViz: false
   enableMasters: false
   enableServerViz: true
