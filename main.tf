@@ -83,14 +83,34 @@ resource "kubernetes_namespace" "iwo-collector" {
   }
 }
 
-resource "kubernetes_namespace" "online-boutique" {
+# resource "kubernetes_namespace" "online-boutique" {
+#   metadata {
+#     annotations = {
+#       name = "online-boutique"
+#     }
+#     labels = {
+#       "app.kubernetes.io/name" = "online-boutique"
+#       "app.kubernetes.io/version" = "0.1.0"
+#
+#       ## SMM Sidecard Proxy Auto Injection ##
+#       "istio.io/rev" = "cp-v111x.istio-system"
+#
+#       ## SecureCN
+#       "SecureApplication-protected" = "full"
+#
+#     }
+#     name = "online-boutique"
+#   }
+# }
+
+resource "kubernetes_namespace" "coolsox" {
   metadata {
     annotations = {
-      name = "online-boutique"
+      name = "coolsox"
     }
     labels = {
-      "app.kubernetes.io/name" = "online-boutique"
-      "app.kubernetes.io/version" = "0.1.0"
+      "app.kubernetes.io/name" = "coolsox"
+      "app.kubernetes.io/version" = "1.0.0"
 
       ## SMM Sidecard Proxy Auto Injection ##
       "istio.io/rev" = "cp-v111x.istio-system"
@@ -99,7 +119,7 @@ resource "kubernetes_namespace" "online-boutique" {
       "SecureApplication-protected" = "full"
 
     }
-    name = "online-boutique"
+    name = "coolsox"
   }
 }
 
@@ -173,385 +193,385 @@ resource "helm_release" "iwo-collector" {
 
 }
 
-## Add Online Boutique Release  ##
-
-resource "helm_release" "online-boutique" {
- namespace   = kubernetes_namespace.online-boutique.metadata[0].name
- name        = "online-boutique"
-
- chart       = var.demo_app_url
-
- values = [ <<EOF
- adservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/adservice # gcr.io/google-samples/microservices-demo/adservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 400m
-       memory: 360Mi
-     limits:
-       cpu: 600m
-       memory: 600Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=adservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 9555 ## External Port for LoadBalancer/NodePort
-       targetPort: 9555
-
- cartservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/cartservice # gcr.io/google-samples/microservices-demo/cartservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 200m
-       memory: 64Mi
-     limits:
-       cpu: 300m
-       memory: 128Mi
-     env:
-       REDIS_ADDR: "redis-cart:6379"
-       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4317" # NOT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT !?
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=cartservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 7070 ## External Port for LoadBalancer/NodePort
-       targetPort: 7070
-
- checkoutservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/checkoutservice # gcr.io/google-samples/microservices-demo/checkoutservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
-       SHIPPING_SERVICE_ADDR: "shippingservice:50051"
-       PAYMENT_SERVICE_ADDR: "paymentservice:50051"
-       EMAIL_SERVICE_ADDR: "emailservice:5000"
-       CURRENCY_SERVICE_ADDR: "currencyservice:7000"
-       CART_SERVICE_ADDR: "cartservice:7070"
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=checkoutservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 5050 ## External Port for LoadBalancer/NodePort
-       targetPort: 5050
-
- currencyservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/currencyservice # gcr.io/google-samples/microservices-demo/currencyservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=currencyservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 7000 ## External Port for LoadBalancer/NodePort
-       targetPort: 7000
-
- emailservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/emailservice # gcr.io/google-samples/microservices-demo/emailservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=emailservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 5000 ## External Port for LoadBalancer/NodePort
-       targetPort: 8080
-
- frontend:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/frontend # gcr.io/google-samples/microservices-demo/frontend
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
-       CURRENCY_SERVICE_ADDR: "currencyservice:7000"
-       CART_SERVICE_ADDR: "cartservice:7070"
-       RECOMMENDATION_SERVICE_ADDR: "recommendationservice:8080"
-       SHIPPING_SERVICE_ADDR: "shippingservice:50051"
-       CHECKOUT_SERVICE_ADDR: "checkoutservice:5050"
-       AD_SERVICE_ADDR: "adservice:9555"
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=frontend,service.version=1.0.0"
-       # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
-       # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
-       ENV_PLATFORM: "onprem"
-       CYMBAL_BRANDING: "'false'" # disabled
-   service:
-     type: LoadBalancer # ClusterIP, NodePort, LoadBalancer
-     http:
-       port: 80 ## External Port for LoadBalancer/NodePort
-       targetPort: 8080
-
- frontendexternal:
-   service:
-     type: NodePort # ClusterIP, NodePort, LoadBalancer
-     http:
-       port: 80 ## External Port for LoadBalancer/NodePort
-       targetPort: 8080
-
- jaeger:
-   replicas: 1
-   server:
-     image:
-       name: jaegertracing/all-in-one
-       tag: latest # 1.31
-     requests:
-       cpu: 200m
-       memory: 360Mi # OOMKilled @ 180Mi
-     limits:
-       cpu: 300m
-       memory: 1200Mi # OOMKilled @ 600Mi
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     p5775:
-       port: 5775
-       targetPort: 5775
-       protocol: UDP
-     p6831:
-       port: 6831
-       targetPort: 6831
-       protocol: UDP
-     p6832:
-       port: 6832
-       targetPort: 6832
-       protocol: UDP
-     p5778:
-       port: 5778
-       targetPort: 5778
-     p14250:
-       port: 14250
-       targetPort: 14250
-     p14268:
-       port: 14268
-       targetPort: 14268
-     p14269:
-       port: 14269
-       targetPort: 14269
-     p9411:
-       port: 9411
-       targetPort: 9411
-
- jaegerfrontend:
-   service:
-     type: NodePort # ClusterIP, NodePort, LoadBalancer
-     p16686:
-       port: 16686
-       targetPort: 16686
-
- loadgenerator:
-   replicas: 1
-   frontendcheck:
-     image:
-       name: busybox
-       tag: latest
-     env:
-       FRONTEND_ADDR: "frontend:80"
-   main:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/loadgenerator # gcr.io/google-samples/microservices-demo/loadgenerator
-       tag: latest # v0.1.0
-     requests:
-       cpu: 300m
-       memory: 256Mi
-     limits:
-       cpu: 500m
-       memory: 512Mi
-     env:
-       FRONTEND_ADDR: "frontend:80"
-       USERS: "'10'"
-
- otelcollector:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/otelcollector
-       tag: latest # v0.1.0
-     requests:
-       cpu: 200m
-       memory: 360Mi # OOMKilled @ 180Mi
-     limits:
-       cpu: 300m
-       memory: 600Mi # OOMKilled @ 300Mi
-     env:
-       APPD_ENDPOINT: "https://syd-sls-agent-api.saas.appdynamics.com"
-       APPD_KEY: "${var.appd_otel_api_key}"
-       APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
-       APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
-       APPD_CONTROLLER_PORT: "'443'"
-       SERVICE_NAMESPACE: "online-boutique"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     p1888:
-       port: 1888
-       targetPort: 1888
-     p8888:
-       port: 8888
-       targetPort: 8888
-     p8889:
-       port: 8889
-       targetPort: 8889
-     p13133:
-       port: 13133
-       targetPort: 13133
-     p4317:
-       port: 4317
-       targetPort: 4317
-     p55670:
-       port: 55670
-       targetPort: 55670
-
- paymentservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/paymentservice # gcr.io/google-samples/microservices-demo/paymentservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=paymentservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 50051 ## External Port for LoadBalancer/NodePort
-       targetPort: 50051
-
- productcatalogservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/productcatalogservice # gcr.io/google-samples/microservices-demo/productcatalogservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 64Mi
-     limits:
-       cpu: 200m
-       memory: 128Mi
-     env:
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=productcatalogservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 3550 ## External Port for LoadBalancer/NodePort
-       targetPort: 3550
-
- recommendationservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/recommendationservice # gcr.io/google-samples/microservices-demo/recommendationservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 220Mi
-     limits:
-       cpu: 200m
-       memory: 450Mi
-     env:
-       PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=recommendationservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 8080 ## External Port for LoadBalancer/NodePort
-       targetPort: 8080
-
- redis:
-   replicas: 1
-   server:
-     image:
-       name: redis
-       tag: alpine
-     requests:
-       cpu: 70m
-       memory: 200Mi
-     limits:
-       cpu: 125m
-       memory: 256Mi
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     redis:
-       port: 6379 ## External Port for LoadBalancer/NodePort
-       targetPort: 6379
-
- shippingservice:
-   replicas: 1
-   server:
-     image:
-       name: public.ecr.aws/j8r8c0y6/otel-online-boutique/shippingservice # gcr.io/google-samples/microservices-demo/shippingservice
-       tag: latest # v0.1.0
-     requests:
-       cpu: 100m
-       memory: 220Mi
-     limits:
-       cpu: 200m
-       memory: 450Mi
-     env:
-       PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
-       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=shippingservice,service.version=1.0.0"
-   service:
-     type: ClusterIP # ClusterIP, NodePort, LoadBalancer
-     grpc:
-       port: 50051 ## External Port for LoadBalancer/NodePort
-       targetPort: 50051
-
-EOF
- ]
-
-}
+# ## Add Online Boutique Release  ##
+#
+# resource "helm_release" "online-boutique" {
+#  namespace   = kubernetes_namespace.online-boutique.metadata[0].name
+#  name        = "online-boutique"
+#
+#  chart       = var.demo_app_url
+#
+#  values = [ <<EOF
+#  adservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/adservice # gcr.io/google-samples/microservices-demo/adservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 400m
+#        memory: 360Mi
+#      limits:
+#        cpu: 600m
+#        memory: 600Mi
+#      env:
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=adservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 9555 ## External Port for LoadBalancer/NodePort
+#        targetPort: 9555
+#
+#  cartservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/cartservice # gcr.io/google-samples/microservices-demo/cartservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 200m
+#        memory: 64Mi
+#      limits:
+#        cpu: 300m
+#        memory: 128Mi
+#      env:
+#        REDIS_ADDR: "redis-cart:6379"
+#        OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4317" # NOT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT !?
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=cartservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 7070 ## External Port for LoadBalancer/NodePort
+#        targetPort: 7070
+#
+#  checkoutservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/checkoutservice # gcr.io/google-samples/microservices-demo/checkoutservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+#        SHIPPING_SERVICE_ADDR: "shippingservice:50051"
+#        PAYMENT_SERVICE_ADDR: "paymentservice:50051"
+#        EMAIL_SERVICE_ADDR: "emailservice:5000"
+#        CURRENCY_SERVICE_ADDR: "currencyservice:7000"
+#        CART_SERVICE_ADDR: "cartservice:7070"
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=checkoutservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 5050 ## External Port for LoadBalancer/NodePort
+#        targetPort: 5050
+#
+#  currencyservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/currencyservice # gcr.io/google-samples/microservices-demo/currencyservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=currencyservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 7000 ## External Port for LoadBalancer/NodePort
+#        targetPort: 7000
+#
+#  emailservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/emailservice # gcr.io/google-samples/microservices-demo/emailservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=emailservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 5000 ## External Port for LoadBalancer/NodePort
+#        targetPort: 8080
+#
+#  frontend:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/frontend # gcr.io/google-samples/microservices-demo/frontend
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+#        CURRENCY_SERVICE_ADDR: "currencyservice:7000"
+#        CART_SERVICE_ADDR: "cartservice:7070"
+#        RECOMMENDATION_SERVICE_ADDR: "recommendationservice:8080"
+#        SHIPPING_SERVICE_ADDR: "shippingservice:50051"
+#        CHECKOUT_SERVICE_ADDR: "checkoutservice:5050"
+#        AD_SERVICE_ADDR: "adservice:9555"
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=frontend,service.version=1.0.0"
+#        # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
+#        # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
+#        ENV_PLATFORM: "onprem"
+#        CYMBAL_BRANDING: "'false'" # disabled
+#    service:
+#      type: LoadBalancer # ClusterIP, NodePort, LoadBalancer
+#      http:
+#        port: 80 ## External Port for LoadBalancer/NodePort
+#        targetPort: 8080
+#
+#  frontendexternal:
+#    service:
+#      type: NodePort # ClusterIP, NodePort, LoadBalancer
+#      http:
+#        port: 80 ## External Port for LoadBalancer/NodePort
+#        targetPort: 8080
+#
+#  jaeger:
+#    replicas: 1
+#    server:
+#      image:
+#        name: jaegertracing/all-in-one
+#        tag: latest # 1.31
+#      requests:
+#        cpu: 200m
+#        memory: 360Mi # OOMKilled @ 180Mi
+#      limits:
+#        cpu: 300m
+#        memory: 1200Mi # OOMKilled @ 600Mi
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      p5775:
+#        port: 5775
+#        targetPort: 5775
+#        protocol: UDP
+#      p6831:
+#        port: 6831
+#        targetPort: 6831
+#        protocol: UDP
+#      p6832:
+#        port: 6832
+#        targetPort: 6832
+#        protocol: UDP
+#      p5778:
+#        port: 5778
+#        targetPort: 5778
+#      p14250:
+#        port: 14250
+#        targetPort: 14250
+#      p14268:
+#        port: 14268
+#        targetPort: 14268
+#      p14269:
+#        port: 14269
+#        targetPort: 14269
+#      p9411:
+#        port: 9411
+#        targetPort: 9411
+#
+#  jaegerfrontend:
+#    service:
+#      type: NodePort # ClusterIP, NodePort, LoadBalancer
+#      p16686:
+#        port: 16686
+#        targetPort: 16686
+#
+#  loadgenerator:
+#    replicas: 1
+#    frontendcheck:
+#      image:
+#        name: busybox
+#        tag: latest
+#      env:
+#        FRONTEND_ADDR: "frontend:80"
+#    main:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/loadgenerator # gcr.io/google-samples/microservices-demo/loadgenerator
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 300m
+#        memory: 256Mi
+#      limits:
+#        cpu: 500m
+#        memory: 512Mi
+#      env:
+#        FRONTEND_ADDR: "frontend:80"
+#        USERS: "'10'"
+#
+#  otelcollector:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/otelcollector
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 200m
+#        memory: 360Mi # OOMKilled @ 180Mi
+#      limits:
+#        cpu: 300m
+#        memory: 600Mi # OOMKilled @ 300Mi
+#      env:
+#        APPD_ENDPOINT: "https://syd-sls-agent-api.saas.appdynamics.com"
+#        APPD_KEY: "${var.appd_otel_api_key}"
+#        APPD_CONTROLLER_ACCOUNT: "${var.appd_account_name}"
+#        APPD_CONTROLLER_HOST: "${var.appd_account_name}.saas.appdynamics.com"
+#        APPD_CONTROLLER_PORT: "'443'"
+#        SERVICE_NAMESPACE: "online-boutique"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      p1888:
+#        port: 1888
+#        targetPort: 1888
+#      p8888:
+#        port: 8888
+#        targetPort: 8888
+#      p8889:
+#        port: 8889
+#        targetPort: 8889
+#      p13133:
+#        port: 13133
+#        targetPort: 13133
+#      p4317:
+#        port: 4317
+#        targetPort: 4317
+#      p55670:
+#        port: 55670
+#        targetPort: 55670
+#
+#  paymentservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/paymentservice # gcr.io/google-samples/microservices-demo/paymentservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=paymentservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 50051 ## External Port for LoadBalancer/NodePort
+#        targetPort: 50051
+#
+#  productcatalogservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/productcatalogservice # gcr.io/google-samples/microservices-demo/productcatalogservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 64Mi
+#      limits:
+#        cpu: 200m
+#        memory: 128Mi
+#      env:
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=productcatalogservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 3550 ## External Port for LoadBalancer/NodePort
+#        targetPort: 3550
+#
+#  recommendationservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/recommendationservice # gcr.io/google-samples/microservices-demo/recommendationservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 220Mi
+#      limits:
+#        cpu: 200m
+#        memory: 450Mi
+#      env:
+#        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=recommendationservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 8080 ## External Port for LoadBalancer/NodePort
+#        targetPort: 8080
+#
+#  redis:
+#    replicas: 1
+#    server:
+#      image:
+#        name: redis
+#        tag: alpine
+#      requests:
+#        cpu: 70m
+#        memory: 200Mi
+#      limits:
+#        cpu: 125m
+#        memory: 256Mi
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      redis:
+#        port: 6379 ## External Port for LoadBalancer/NodePort
+#        targetPort: 6379
+#
+#  shippingservice:
+#    replicas: 1
+#    server:
+#      image:
+#        name: public.ecr.aws/j8r8c0y6/otel-online-boutique/shippingservice # gcr.io/google-samples/microservices-demo/shippingservice
+#        tag: latest # v0.1.0
+#      requests:
+#        cpu: 100m
+#        memory: 220Mi
+#      limits:
+#        cpu: 200m
+#        memory: 450Mi
+#      env:
+#        PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+#        OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otelcollector:4317"
+#        OTEL_RESOURCE_ATTRIBUTES: "service.namespace=online-boutique,service.name=shippingservice,service.version=1.0.0"
+#    service:
+#      type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+#      grpc:
+#        port: 50051 ## External Port for LoadBalancer/NodePort
+#        targetPort: 50051
+#
+# EOF
+#  ]
+#
+# }
 
 ## Add Metrics Server Release ##
 # - Required for AppD Cluster Agent
@@ -633,8 +653,8 @@ installClusterAgent: true
 installInfraViz: true
 
 infraViz:
-  enableContainerHostId: false
-  enableDockerViz: false
+  enableContainerHostId: true
+  enableDockerViz: true # should work in <1.21
   enableMasters: false
   enableServerViz: true
   nodeOS: linux
@@ -902,14 +922,14 @@ EOF
 #  depends_on = [helm_release.metrics-server]
 # }
 
-## Add Prometheus (Kube-state-metrics, node-exporter, alertmanager)  ##
-resource "helm_release" "prometheus" {
-  namespace   = "kube-system"
-  name        = "prometheus"
-
-  repository  = "https://prometheus-community.github.io/helm-charts"
-  chart       = "prometheus"
-
-  ## Delay Chart Deployment
-  # depends_on = [helm_release.metrics-server]
-}
+# ## Add Prometheus (Kube-state-metrics, node-exporter, alertmanager)  ##
+# resource "helm_release" "prometheus" {
+#   namespace   = "kube-system"
+#   name        = "prometheus"
+#
+#   repository  = "https://prometheus-community.github.io/helm-charts"
+#   chart       = "prometheus"
+#
+#   ## Delay Chart Deployment
+#   # depends_on = [helm_release.metrics-server]
+# }
