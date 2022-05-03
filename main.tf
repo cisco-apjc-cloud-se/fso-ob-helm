@@ -922,14 +922,14 @@ EOF
 #  depends_on = [helm_release.metrics-server]
 # }
 
-# ## Add Prometheus (Kube-state-metrics, node-exporter, alertmanager)  ##
-# resource "helm_release" "prometheus" {
-#   namespace   = "kube-system"
-#   name        = "prometheus"
-#
-#   repository  = "https://prometheus-community.github.io/helm-charts"
-#   chart       = "prometheus"
-#
-#   ## Delay Chart Deployment
-#   # depends_on = [helm_release.metrics-server]
-# }
+## Add Prometheus (Kube-state-metrics, node-exporter, alertmanager)  ##
+resource "helm_release" "prometheus" {
+  namespace   = "kube-system"
+  name        = "prometheus"
+
+  repository  = "https://prometheus-community.github.io/helm-charts"
+  chart       = "prometheus"
+
+  ## Delay Chart Deployment
+  # depends_on = [helm_release.metrics-server]
+}
